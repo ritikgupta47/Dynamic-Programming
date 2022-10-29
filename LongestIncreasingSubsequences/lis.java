@@ -23,26 +23,47 @@ Output: 1
 
 public class lis {
     public static void main(String[] args) {
-        int[] nums = {10,9,2,5,3,7,101,18};
+        int[] nums = { 10, 9, 2, 5, 3, 7, 101, 18 };
         int n = nums.length;
-        int[][] dp =new int[n][n+1];
-        for(int[] rows : dp){
-            Arrays.fill(rows , -1);
+        int[][] dp = new int[n][n + 1];
+        for (int[] rows : dp) {
+            Arrays.fill(rows, -1);
         }
-        
-        System.out.println("LIS : "+solve(nums, 0, -1, dp));
+
+        System.out.println("LIS : " + solve(nums, 0, -1, dp));
+        System.out.println(lengthOfLIS(nums));
     }
+
     // memoization
-    public static int solve(int[] nums , int i , int prev , int[][] dp){
-        if(i == nums.length) return 0;
-        
-        if(dp[i][prev + 1] != -1) return dp[i][prev+1];
-        
-        int notTake = 0 + solve(nums , i + 1 , prev , dp); // not take
-        int take = Integer.MIN_VALUE; //take
-        if(prev == -1 || nums[i] > nums[prev]){
-            take = 1 + solve(nums , i + 1 , i , dp);
+    public static int solve(int[] nums, int i, int prev, int[][] dp) {
+        if (i == nums.length)
+            return 0;
+
+        if (dp[i][prev + 1] != -1)
+            return dp[i][prev + 1];
+
+        int notTake = 0 + solve(nums, i + 1, prev, dp); // not take
+        int take = Integer.MIN_VALUE; // take
+        if (prev == -1 || nums[i] > nums[prev]) {
+            take = 1 + solve(nums, i + 1, i, dp);
         }
-        return dp[i][prev + 1]=Math.max(take , notTake);
+        return dp[i][prev + 1] = Math.max(take, notTake);
+    }
+    // tabulation
+    public static int lengthOfLIS(int[] nums) {
+        int n = nums.length;
+        int[][] dp = new int[n + 1][n + 1];
+
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= -1; j--) {
+                if (j == -1 || nums[i] > nums[j]) {
+                    dp[i][j + 1] = Math.max(dp[i + 1][i + 1] + 1, dp[i + 1][j + 1]);
+                } else {
+                    dp[i][j + 1] = dp[i + 1][j + 1];
+                }
+            }
+        }
+
+        return dp[0][0];
     }
 }
